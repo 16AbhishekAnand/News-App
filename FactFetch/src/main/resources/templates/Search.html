@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="layout :: layout">
+<section>
+  <h2>Search News</h2>
+  <form th:action="@{/news/search}" method="get">
+    <label for="query">Search:</label>
+    <input type="text" id="query" name="query" required>
+    <button type="submit">Search</button>
+  </form>
+
+  <div th:if="${results != null}">
+    <h3>Search Results</h3>
+    <ul>
+      <li th:each="article : ${results}">
+        <a th:href="${article.url}" th:text="${article.headline}" target="_blank"></a>
+      </li>
+    </ul>
+  </div>
+  <div th:if="${results == null}">
+    <p>No results found.</p>
+  </div>
+</section>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>News Application</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* Add your CSS styles here */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h2 {
+      color: #333;
+    }
+    .headline {
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .headline-title {
+      cursor: pointer; /* Add cursor pointer to indicate clickability */
+    }
+    .social-buttons {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-start;
+    }
+    .social-buttons a {
+      margin-right: 10px;
+      text-decoration: none;
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 5px;
+      display: inline-block;
+    }
+    .facebook-share { background-color: #3b5998; }
+    .twitter-share { background-color: #1da1f2; }
+    h2 {text-align: center;}
+  </style>
+</head>
+<body>
+<h2>News Headlines</h2>
+<div id="news-container"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    fetch('http://localhost:8080/news/top-headlines')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch headlines');
+        }
+        return response.json();
+      })
+      .then(data => {
+        const newsContainer = document.getElementById('news-container');
+        data.forEach(article => {
+          const headlineElement = document.createElement('div');
+          headlineElement.className = 'headline';
+
+          const headlineTitle = document.createElement('div');
+          headlineTitle.className = 'headline-title';
+          headlineTitle.textContent = article.headline;
+
+          headlineTitle.addEventListener('click', () => {
+            // Open the news article URL in a new tab
+            window.open(article.url, '_blank');
+          });
+
+          // Create social media share buttons
+          const socialButtons = document.createElement('div');
+          socialButtons.className = 'social-buttons';
+
+          const facebookShare = document.createElement('a');
+          facebookShare.className = 'facebook-share';
+          facebookShare.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(article.url)}`;
+          facebookShare.target = '_blank';
+          facebookShare.innerHTML = '<i class="fab fa-facebook-f"></i> Share on Facebook';
+
+          const twitterShare = document.createElement('a');
+          twitterShare.className = 'twitter-share';
+          twitterShare.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(article.headline)}&url=${encodeURIComponent(article.url)}`;
+          twitterShare.target = '_blank';
+          twitterShare.innerHTML = '<i class="fab fa-twitter"></i> Share on Twitter';
+
+          socialButtons.appendChild(facebookShare);
+          socialButtons.appendChild(twitterShare);
+
+          // Append headline title and social buttons to the headline element
+          headlineElement.appendChild(headlineTitle);
+          headlineElement.appendChild(socialButtons);
+
+          // Append headline element to the news container
+          newsContainer.appendChild(headlineElement);
+        });
+      })
+      .catch(error => console.error('Error fetching News Headlines:', error));
+  });
+</script>
+</body>
+</html>
